@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import firebase from './firebase';
-import { auth } from './firebase.js';
+import { auth, storage, db } from './firebase.js';
+import firebase from 'firebase/compat/app';
 
 function Header(props) {
+
+    // Barra de progresso
+    const [progress, setProgress] = useState(0);
+    const [file, setFile] = useState(null);
 
     useEffect(() => {
 
     }, [])
 
     // Função criar conta
-    function criarConta(e){
+    function criarConta(e) {
 
         e.preventDefault();
         let email = document.getElementById('email-cadastro').value;
@@ -18,38 +22,91 @@ function Header(props) {
 
         // Criar conta firebase
         auth.createUserWithEmailAndPassword(email, senha)
-        .then((authUser) => {
-            authUser.user.updateProfile({
-                displayName: username
-            })
-            alert('Conta criada com sucesso!');
-            let modal = document.querySelector('.modalCriarConta');
+            .then((authUser) => {
+                authUser.user.updateProfile({
+                    displayName: username
+                })
+                alert('Conta criada com sucesso!');
+                let modal = document.querySelector('.modalCriarConta');
 
-            modal.style.display = "none";
-        }).catch((error) => {
-            alert(error.message);
-        })
-        ;
+                modal.style.display = "none";
+            }).catch((error) => {
+                alert(error.message);
+            })
+            ;
 
     }
 
     // Função logar
-    function logar(e){
+    function logar(e) {
         e.preventDefault();
         let email = document.getElementById('email-login').value;
         let senha = document.getElementById('senha-login').value;
 
         auth.signInWithEmailAndPassword(email, senha)
-        .then((auth) => {
-            props.setUser(auth.user.displayName);
-            alert('Logado com sucesso!')
-        }).catch((err)=>{
-            alert(err.message)
+            .then((auth) => {
+                props.setUser(auth.user.displayName);
+                alert('Logado com sucesso!')
+            }).catch((err) => {
+                alert(err.message)
+            })
+    }
+
+    // Função para abrir modal de upload
+    function abrirModalUpload(e) {
+        e.preventDefault();
+
+        let modal = document.querySelector('.modalUpload');
+
+        modal.style.display = "block";
+    }
+
+    // Função para fechar modal de upload
+    function fecharModalUpload(e) {
+        let modal = document.querySelector('.modalUpload');
+
+        modal.style.display = "none";
+    }
+
+    // Função para fazer Upload
+    function uploadPost(e) {
+        e.preventDefault();
+
+        let tituloPost = document.getElementById('titulo-upload').value;
+
+        const uploadTask = storage.ref(`images/${file.name}`).put(file);
+
+        uploadTask.on("state_changed", function (snapshot) {
+            const progress = Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setProgress(progress);
+        }, function (error) {
+
+        }, function () {
+
+            storage.ref("images").child(file.name).getDownloadURL()
+                .then(function (url) {
+                    db.collection('posts').add({
+                        titulo: tituloPost,
+                        image: url,
+                        userName: props.user,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+
+                    // Zerando o progresso e o arquivo
+                    setProgress(0);
+                    setFile(null);
+
+                    alert('Upload Realizado com Sucesso!');
+
+                    // Resetando o formulário
+                    document.getElementById('form-upload').reset();
+
+                })
         })
     }
 
     // Função para abrir a modal de criação de conta
-    function abrirModalCriarConta(e){
+    function abrirModalCriarConta(e) {
         e.preventDefault();
 
         let modal = document.querySelector('.modalCriarConta');
@@ -58,10 +115,10 @@ function Header(props) {
     }
 
     // Função para fechar a modal de criação de conta
-    function fecharModalCriar(){
+    function fecharModalCriar() {
         let modal = document.querySelector('.modalCriarConta');
 
-        modal.style.display = "none";   
+        modal.style.display = "none";
     }
 
     return (
@@ -80,6 +137,19 @@ function Header(props) {
                 </div>
             </div>
 
+            <div className="modalUpload">
+                <div className="formUpload">
+                    <div onClick={() => fecharModalUpload()} className="close-modal-criar">X</div>
+                    <h2>Fazer Upload</h2>
+                    <form id="form-upload" onSubmit={(e) => uploadPost(e)}>
+                        <progress id="progress-upload" value={progress}></progress>
+                        <input id="titulo-upload" type="text" placeholder="Nome da sua foto..." />
+                        <input onChange={(e) => setFile(e.target.files[0])} type="file" name="file" />
+                        <input type="submit" value="Postar no Instagram!" />
+                    </form>
+                </div>
+            </div>
+
             <div className='center'>
                 <div className='header__logo'>
                     <a href=''><img src={process.env.PUBLIC_URL + '/images/logo.png'}></img></a>
@@ -89,7 +159,7 @@ function Header(props) {
                     (props.user) ?
                         <div className="header__logadoInfo">
                             <span>Olá <b>{props.user}</b></span>
-                            <a href="#">Postar!</a>
+                            <a href='#' onClick={(e) => abrirModalUpload(e)}>Postar!</a>
                         </div>
                         :
                         <div className='header__loginForm'>
