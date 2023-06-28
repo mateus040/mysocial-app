@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { auth, storage, db } from './firebase.js';
 import firebase from 'firebase/compat/app';
+import Swal from 'sweetalert2';
 
 function Header(props) {
 
@@ -43,22 +44,53 @@ function Header(props) {
         let email = document.getElementById('email-login').value;
         let senha = document.getElementById('senha-login').value;
 
-        auth.signInWithEmailAndPassword(email, senha)
-            .then((auth) => {
-                props.setUser(auth.user.displayName);
-                alert('Logado com sucesso!');
-                window.location.href = "/";
-            }).catch((err) => {
-                alert(err.message);
-            })
+        Swal.fire({
+            title: "Logado com Sucesso!",
+            text: "Clique no botão para continuar!",
+            icon: "success",
+            showCancelButton: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "OK",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                auth.signInWithEmailAndPassword(email, senha)
+                    .then((auth) => {
+                        props.setUser(auth.user.displayName);
+                    }).catch((error) => {
+                        Swal.fire({
+                            title: "Erro no login",
+                            text: "Ocorreu um erro ao fazer login. Tente novamente!",
+                            icon: "error",
+                            showCancelButton: false,
+                            confirmButtonColor: "#3085d6",
+                            confirmButtonText: "OK",
+                        });
+                    });
+            }
+        });
     }
 
     // Função deslogar
     function deslogar(e) {
         e.preventDefault();
-        auth.signOut().then(function (val) {
-            props.setUser(null);
-            window.location.href = "/";
+
+        Swal.fire({
+            title: 'Confirmar logout',
+            text: 'Tem certeza que deseja sair?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sim',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                auth.signOut()
+                    .then(() => {
+                        props.setUser(null);
+                        window.location.href = "/";
+                    }).catch((error) => {
+                        Swal.fire('Erro', 'Ocorreu um erro ao fazer logout.', 'error');
+                    })
+            }
         })
     }
 
@@ -181,7 +213,7 @@ function Header(props) {
                                 <input type='submit' name='acao' value='Entrar' />
                             </form>
                             <div className="btn__criarConta">
-                                <a onClick={(e) => abrirModalCriarConta(e)} href="#">Criar Conta!</a>
+                                <a onClick={(e) => abrirModalCriarConta(e)} href="#">Criar Conta</a>
                             </div>
                         </div>
                 }
