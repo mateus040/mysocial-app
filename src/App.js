@@ -12,10 +12,17 @@ function App() {
 
   useEffect(() => {
 
+    // Configurando login
+    auth.onAuthStateChanged(function (val) {
+      if (val != null) {
+        setUser(val.displayName);
+      }
+    })
+
     // Ordenando o timestamp em ordem decrescente
     db.collection('posts').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
       setPosts(snapshot.docs.map((document) => {
-        return {id:document.id,info:document.data()} // Atualizando de forma automática
+        return { id: document.id, info: document.data() } // Atualizando de forma automática
       }))
     })
 
@@ -28,14 +35,14 @@ function App() {
       <Header setUser={setUser} user={user}></Header>
 
       {
-        posts.map(function(val){
+        posts.map(function (val) {
 
           return (
 
             <Post user={user} info={val.info} id={val.id} />
 
           )
-          
+
         })
       }
 

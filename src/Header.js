@@ -46,10 +46,20 @@ function Header(props) {
         auth.signInWithEmailAndPassword(email, senha)
             .then((auth) => {
                 props.setUser(auth.user.displayName);
-                alert('Logado com sucesso!')
+                alert('Logado com sucesso!');
+                window.location.href = "/";
             }).catch((err) => {
-                alert(err.message)
+                alert(err.message);
             })
+    }
+
+    // Função deslogar
+    function deslogar(e) {
+        e.preventDefault();
+        auth.signOut().then(function (val) {
+            props.setUser(null);
+            window.location.href = "/";
+        })
     }
 
     // Função para abrir modal de upload
@@ -100,6 +110,7 @@ function Header(props) {
 
                     // Resetando o formulário
                     document.getElementById('form-upload').reset();
+                    fecharModalUpload();
 
                 })
         })
@@ -160,6 +171,7 @@ function Header(props) {
                         <div className="header__logadoInfo">
                             <span>Olá <b>{props.user}</b></span>
                             <a href='#' onClick={(e) => abrirModalUpload(e)}>Postar!</a>
+                            <a onClick={(e) => deslogar(e)}>Deslogar</a>
                         </div>
                         :
                         <div className='header__loginForm'>
