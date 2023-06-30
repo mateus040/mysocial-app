@@ -15,30 +15,41 @@ function Header(props) {
 
     // Função criar conta
     function criarConta(e) {
-
         e.preventDefault();
         let email = document.getElementById('email-cadastro').value;
         let username = document.getElementById('username-cadastro').value;
         let senha = document.getElementById('senha-cadastro').value;
-
-        // Criar conta firebase
+    
         auth.createUserWithEmailAndPassword(email, senha)
             .then((authUser) => {
                 authUser.user.updateProfile({
                     displayName: username
-                })
-                alert('Conta criada com sucesso!');
-
-                document.getElementById('form-criarConta').reset();
-
-                let modal = document.querySelector('.area-login');
-
-                modal.style.display = "none";
-            }).catch((error) => {
-                alert(error.message);
+                });
+    
+                Swal.fire({
+                    title: "Conta criada com sucesso!",
+                    text: "Clique no botão para continuar!",
+                    icon: "success",
+                    showCancelButton: false,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "OK",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        props.setUser(authUser.user.displayName);
+                        fecharModalCriarConta();
+                    }
+                });
             })
-            ;
-
+            .catch((error) => {
+                Swal.fire({
+                    title: "Erro ao Criar Conta",
+                    text: "Verifique se o e-mail e a senha estão no formato correto!",
+                    icon: "error",
+                    showCancelButton: false,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "OK",
+                });
+            });
     }
 
     // Função logar
@@ -164,7 +175,7 @@ function Header(props) {
     }
 
     // Função para fechar a modal de criação de conta
-    function fecharModalCriar() {
+    function fecharModalCriarConta() {
         let modal = document.querySelector('.area-criarConta');
 
         modal.style.display = "none";
@@ -193,13 +204,13 @@ function Header(props) {
                 <div className="login">
                     <img src={process.env.PUBLIC_URL + '/images/logo.png'}></img>
 
-                    <div onClick={() => fecharModalCriar()} className="close-modal-criar">X</div>
+                    <div onClick={() => fecharModalCriarConta()} className="close-modal-criar">X</div>
 
 
                     <form id="form-criarConta" onSubmit={(e) => criarConta(e)}>
                         <input id="username-cadastro" type="text" placeholder="Username" />
                         <input id="email-cadastro" type="text" placeholder="E-mail" />
-                        <input id="senha-cadastro" type="password" placeholder="Senha" />
+                        <input id="senha-cadastro" type="password" placeholder="Senha (mín: 6 dígitos)" />
                         <input type="submit" value="Criar Conta!" />
                     </form>
                 </div>
