@@ -28,7 +28,10 @@ function Header(props) {
                     displayName: username
                 })
                 alert('Conta criada com sucesso!');
-                let modal = document.querySelector('.modalCriarConta');
+
+                document.getElementById('form-criarConta').reset();
+
+                let modal = document.querySelector('.area-login');
 
                 modal.style.display = "none";
             }).catch((error) => {
@@ -66,6 +69,8 @@ function Header(props) {
                             confirmButtonText: "OK",
                         });
                     });
+
+                    fecharModalLogin();
             }
         });
     }
@@ -152,14 +157,31 @@ function Header(props) {
     function abrirModalCriarConta(e) {
         e.preventDefault();
 
-        let modal = document.querySelector('.modalCriarConta');
+        let modal = document.querySelector('.area-criarConta');
+        document.querySelector('.area-login').style.display = "none";
 
         modal.style.display = "block";
     }
 
     // Função para fechar a modal de criação de conta
     function fecharModalCriar() {
-        let modal = document.querySelector('.modalCriarConta');
+        let modal = document.querySelector('.area-criarConta');
+
+        modal.style.display = "none";
+    }
+
+    // Função para abrir a modal de login
+    function abrirModalLogin(e){
+        e.preventDefault();
+
+        let modal = document.querySelector(".area-login");
+
+        modal.style.display = "block";
+    }
+
+    // Função para fechar a modal de login
+    function fecharModalLogin(e){
+        let modal = document.querySelector(".area-login");
 
         modal.style.display = "none";
     }
@@ -167,18 +189,41 @@ function Header(props) {
     return (
         <div className='header'>
 
-            <div className="modalCriarConta">
-                <div className="formCriarConta">
+            <div className="area-criarConta">
+                <div className="login">
+                    <img src={process.env.PUBLIC_URL + '/images/logo.png'}></img>
+
                     <div onClick={() => fecharModalCriar()} className="close-modal-criar">X</div>
-                    <h2>Criar Conta</h2>
-                    <form onSubmit={(e) => criarConta(e)}>
-                        <input id="email-cadastro" type="text" placeholder="Seu e-mail..." />
-                        <input id="username-cadastro" type="text" placeholder="Seu username..." />
-                        <input id="senha-cadastro" type="password" placeholder="Sua senha..." />
+
+
+                    <form id="form-criarConta" onSubmit={(e) => criarConta(e)}>
+                        <input id="username-cadastro" type="text" placeholder="Username" />
+                        <input id="email-cadastro" type="text" placeholder="E-mail" />
+                        <input id="senha-cadastro" type="password" placeholder="Senha" />
                         <input type="submit" value="Criar Conta!" />
                     </form>
                 </div>
+
             </div>
+
+            <div className="area-login">
+                <div className="login">
+                    <img src={process.env.PUBLIC_URL + '/images/logo.png'}></img>
+
+                    <div onClick={() => fecharModalLogin()} className="close-modal-criar">X</div>
+
+
+                    <form id="form-criarConta" onSubmit={(e) => logar(e)}>
+                        <input id="email-login" type="text" placeholder="E-mail" />
+                        <input id="senha-login" type="password" placeholder="Senha" />
+                        <input type="submit" value="Logar" />
+                    </form>
+                    <p>Ainda não tem uma conta?<a onClick={(e) => abrirModalCriarConta(e)}>Criar Conta!</a></p>
+                </div>
+
+            </div>
+
+
 
             <div className="modalUpload">
                 <div className="formUpload">
@@ -208,12 +253,10 @@ function Header(props) {
                         :
                         <div className='header__loginForm'>
                             <form onSubmit={(e) => logar(e)}>
-                                <input id="email-login" type='text' placeholder='E-mail:' />
-                                <input id="senha-login" type='password' placeholder='Senha:' />
-                                <input type='submit' name='acao' value='Entrar' />
+                                <input onClick={(e) => abrirModalLogin(e)} type="button" name='acao' value='Entrar' />
                             </form>
                             <div className="btn__criarConta">
-                                <a onClick={(e) => abrirModalCriarConta(e)} href="#">Criar Conta</a>
+                                <input onClick={(e) => abrirModalCriarConta(e)} type="button" value='Criar Conta' />
                             </div>
                         </div>
                 }

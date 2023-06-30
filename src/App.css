@@ -48,7 +48,7 @@ body{
   border-radius: 10px;
 }
 
-.header__loginForm input[type=submit]{
+.header__loginForm input[type=button]{
   padding-left: 50px;
   background-color: #000;
   color: #fff;
@@ -62,6 +62,7 @@ body{
 
 .btn__criarConta{
   display: inline-block;
+  padding-left: 10px;
 }
 
 .btn__criarConta a{
@@ -85,7 +86,7 @@ body{
   text-decoration: none;
 }
 
-.modalCriarConta{
+.area-login, .area-criarConta{
   display: none;
   position: fixed;
   left: 0;
@@ -95,30 +96,65 @@ body{
   background-color: rgba(0,0,0,0.5);
 }
 
-.formCriarConta{
+.login{
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%); /* Obrigatório */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: #fff;
-  padding: 20px;
-  width: 80%;
-  max-width: 700px;
-  text-align: center;
+  width: 400px;
+  height: 350px;
+  padding: 35px;
+  border-radius: 10px;
 }
 
-.formCriarConta input{
+.login form{
+  display: flex;
   width: 100%;
-  height: 30px;
-  margin-bottom: 10px;
-  padding-left: 10px;
-  border: 1px solid #ccc;
+  flex-direction: column;
 }
 
-.formCriarConta input[type=submit]{
-  background-color: #0095f6;
-  cursor: pointer;
+.login input{
+  margin-top: 10px;
+  border-color: #000;
+  height: 45px;
+  outline: none;
+  border-radius: 8px;
+  padding-left: 10px;
+}
+
+.login img{
+  width: 150px;
+  height: auto;
+}
+
+input::placeholder{
+  font-size: 14px;
+}
+
+.login form [type=submit]{
+  display: block;
+  background-color: black;
   color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 0;
+}
+
+.login p{
+  padding-top: 30px;
+  font-style: italic;
+}
+
+.login a{
+  color: #000;
+  margin-left: 8px;
+  font-style: italic;
+  cursor: pointer;
 }
 
 .close-modal-criar{
@@ -132,7 +168,7 @@ body{
   line-height: 30px;
   height: 30px;
   border-radius: 15px;
-  background-color: #0095f6;
+  background-color: #000;
 }
 
 
