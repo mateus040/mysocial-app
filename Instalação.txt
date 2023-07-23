@@ -1,0 +1,12 @@
+Iniciando React
+
+- Instalar o Node.js
+- Abrir o CMD e entrar na rota desejada
+- Executar o seguinte comando: npx create-react-app nomeDoProjeto
+- Após criar o projeto, entre na rota do mesmo e execute: npm start
+- Dentro da pasta do projeto, instale o firebase: npm install firebase
+
+Depois do projeto pronto (fazendo deploy):
+- npm run build
+- firebase init
+- Selecione "Hosting: Configure and deploy Firebase Hosting sites"
