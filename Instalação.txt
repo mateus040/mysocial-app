@@ -10,3 +10,7 @@ Depois do projeto pronto (fazendo deploy):
 - npm run build
 - firebase init
 - Selecione "Hosting: Configure and deploy Firebase Hosting sites"
+
+- firebase deploy --only hosting
+
+https://mysocial-app-1f02b.web.app
